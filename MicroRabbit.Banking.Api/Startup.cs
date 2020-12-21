@@ -56,16 +56,13 @@ namespace MicroRabbit.Banking.Api
                 });
             });
 
-            //services.AddMediatR(typeof(Startup));
-
-            ////Domain
-            //services.AddTransient<IRequestHandler<CreateTransferCommand, bool>, TransferCommandHandler>();
-
             //Domain Bus
-            services.AddScoped<IEventBus, RabbitMQBus>();
+            services.AddTransient<IEventBus, RabbitMQBus>();
 
             //Application Services
             services.AddScoped<IAccountService, AccountService>();
+
+            services.AddTransient<IRequestHandler<CreateTransferCommand, bool>, TransferCommandHandler>();
 
             //Data
             services.AddScoped<IAccountRepository, AccountRepository>();

@@ -67,6 +67,8 @@ namespace MicroRabbit.Infostructure.Bus
 
         private void StartBasicConsume<T>() where T : Event
         {
+            if (_handlers.Count == 0) return;
+
             ConnectionFactory factory = new ConnectionFactory()
                 { HostName = "localhost", DispatchConsumersAsync=true };
 
@@ -105,7 +107,11 @@ namespace MicroRabbit.Infostructure.Bus
                     var handler = Activator.CreateInstance(item);
                     if (handler == null) continue;
 
-                    var eventType = _eventTypes.FirstOrDefault(o => o.GetType().Name == eventName);
+                    var eventType = _eventTypes.FirstOrDefault(o => o.Name == eventName);
+                    if(eventType == null)
+                    {
+                        eventType = _handlers[eventName].FirstOrDefault(o => o.GetType().Name == eventName);
+                    }
                     var @event = JsonConvert.DeserializeObject(message, eventType);
                     var concreteType = typeof(IEventHandler<>).MakeGenericType(eventType);
                     await (Task)concreteType.GetMethod("HandleAsync").Invoke(handler, new object[] { @event });

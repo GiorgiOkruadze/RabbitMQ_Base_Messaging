@@ -6,6 +6,8 @@ using MicroRabbit.Transfer.Application.Services.Abstractions;
 using MicroRabbit.Transfer.Data.Context;
 using MicroRabbit.Transfer.Data.Repository;
 using MicroRabbit.Transfer.Data.Repository.Abstraction;
+using MicroRabbit.Transfer.Domain.EventHandlers;
+using MicroRabbit.Transfer.Domain.Events;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -54,9 +56,10 @@ namespace MicroRabbit.Transfer.Api
                 });
             });
 
-            services.AddScoped<IEventBus, RabbitMQBus>();
+            services.AddTransient<IEventBus, RabbitMQBus>();
             services.AddScoped<ITransferService, TransferService>();
             services.AddScoped<ITransferRepository, TransferRepository>();
+            services.AddTransient<IEventHandler<TransferCreatedEvent>, TranferEventHandler>();
 
             var assembly = AppDomain.CurrentDomain.Load("MicroRabbit.Transfer.Domain");
             services.AddMediatR(assembly);
@@ -89,6 +92,14 @@ namespace MicroRabbit.Transfer.Api
             {
                 endpoints.MapControllers();
             });
+
+            ConfigureEventBus(app);
+        }
+
+        private void ConfigureEventBus(IApplicationBuilder app)
+        {
+            var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
+            eventBus.Subscribe<TransferCreatedEvent, TranferEventHandler>();
         }
     }
 }

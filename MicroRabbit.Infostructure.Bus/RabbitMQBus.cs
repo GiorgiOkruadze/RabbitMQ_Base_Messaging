@@ -36,8 +36,8 @@ namespace MicroRabbit.Infostructure.Bus
             ConnectionFactory factory = new ConnectionFactory() { HostName = "localhost" };
             using IConnection connection = factory.CreateConnection();
             using IModel channel = connection.CreateModel();
-
             var eventName = eventArg.GetType().Name;
+            channel.ExchangeDeclare(exchange: eventName, type: ExchangeType.Fanout);
             channel.QueueDeclare(eventName, false, false, false, null);
             var message = JsonConvert.SerializeObject(eventArg);
             var body = Encoding.UTF8.GetBytes(message);
@@ -75,13 +75,17 @@ namespace MicroRabbit.Infostructure.Bus
             ConnectionFactory factory = new ConnectionFactory()
                 { HostName = "localhost", DispatchConsumersAsync=true };
 
-            using IConnection connection = factory.CreateConnection();
-            using IModel channel = connection.CreateModel();
-
-            channel.QueueDeclare(typeof(T).Name, false, false, false, null);
+            IConnection connection = factory.CreateConnection();
+            IModel channel = connection.CreateModel();
+            var eventName = typeof(T).Name;
+            channel.ExchangeDeclare(exchange: eventName, type: ExchangeType.Fanout);
+            channel.QueueDeclare(eventName, false, false, false, null);
             var consumer = new AsyncEventingBasicConsumer(channel);
             consumer.Received += SubscribeReceivedAsync;
-
+            channel.CallbackException += (ch, arg)=>{
+                var sms = arg.Exception.Message;
+                var ex = arg.Exception;
+            };
 
             channel.BasicConsume(typeof(T).Name, true, consumer);
         }

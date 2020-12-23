@@ -9,5 +9,6 @@ namespace MicroRabbit.Transfer.Data.Repository.Abstraction
     public interface ITransferRepository
     {
         Task<IEnumerable<TransferLog>> ReadAsync();
+        Task<bool> CreateAsync(TransferLog item);
     }
 }

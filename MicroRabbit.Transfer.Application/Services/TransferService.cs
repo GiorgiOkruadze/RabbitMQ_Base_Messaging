@@ -20,6 +20,11 @@ namespace MicroRabbit.Transfer.Application.Services
             _transferRepo = transferRepo;
         }
 
+        public async Task<bool> CreateAsync(TransferLog item)
+        {
+            return await _transferRepo.CreateAsync(item);
+        }
+
         public async Task<IEnumerable<TransferLog>> GetTransferLogs()
         {
             return await _transferRepo.ReadAsync();

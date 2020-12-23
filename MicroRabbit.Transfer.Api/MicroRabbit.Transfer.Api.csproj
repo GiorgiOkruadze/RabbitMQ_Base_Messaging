@@ -20,6 +20,7 @@
     <ProjectReference Include="..\MicroRabbit.Infrastructure.IoC\MicroRabbit.Infrastructure.IoC.csproj" />
     <ProjectReference Include="..\MicroRabbit.Transfer.Application\MicroRabbit.Transfer.Application.csproj" />
     <ProjectReference Include="..\MicroRabbit.Transfer.Data\MicroRabbit.Transfer.Data.csproj" />
+    <ProjectReference Include="..\MicroRabbit.Transfer.DomainModels\MicroRabbit.Transfer.DomainModels.csproj" />
     <ProjectReference Include="..\MicroRabbit.Transfer.Domain\MicroRabbit.Transfer.Domain.csproj" />
   </ItemGroup>
 

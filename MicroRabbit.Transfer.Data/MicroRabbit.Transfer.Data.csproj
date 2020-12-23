@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MicroRabbit.Transfer.Domain\MicroRabbit.Transfer.Domain.csproj" />
+    <ProjectReference Include="..\MicroRabbit.Transfer.DomainModels\MicroRabbit.Transfer.DomainModels.csproj" />
   </ItemGroup>
 
 </Project>

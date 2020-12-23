@@ -1,6 +1,7 @@
 using MediatR;
 using MicroRabbit.Domain.Core.Bus;
 using MicroRabbit.Infostructure.Bus;
+using MicroRabbit.Infrastructure.IoC;
 using MicroRabbit.Transfer.Application.Services;
 using MicroRabbit.Transfer.Application.Services.Abstractions;
 using MicroRabbit.Transfer.Data.Context;
@@ -55,16 +56,16 @@ namespace MicroRabbit.Transfer.Api
                     }
                 });
             });
-
-            services.AddTransient<IEventBus, RabbitMQBus>();
-            services.AddScoped<ITransferService, TransferService>();
-            services.AddScoped<ITransferRepository, TransferRepository>();
-            services.AddTransient<IEventHandler<TransferCreatedEvent>, TranferEventHandler>();
-
             var assembly = AppDomain.CurrentDomain.Load("MicroRabbit.Transfer.Domain");
             services.AddMediatR(assembly);
 
+            RegisterServices(services);
             services.AddControllers();
+        }
+
+        private void RegisterServices(IServiceCollection services)
+        {
+            DependencyContainer.RegisterServices(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -99,7 +100,7 @@ namespace MicroRabbit.Transfer.Api
         private void ConfigureEventBus(IApplicationBuilder app)
         {
             var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
-            eventBus.Subscribe<TransferCreatedEvent, TranferEventHandler>();
+            eventBus.Subscribe<TransferCreatedEvent, TransferEventHandler>();
         }
     }
 }

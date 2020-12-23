@@ -8,6 +8,7 @@ using MicroRabbit.Banking.Data.Context;
 using MicroRabbit.Banking.Data.Repository;
 using MicroRabbit.Domain.Core.Bus;
 using MicroRabbit.Infostructure.Bus;
+using MicroRabbit.Infrastructure.IoC;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -55,23 +56,16 @@ namespace MicroRabbit.Banking.Api
                     }
                 });
             });
-
-            //Domain Bus
-            services.AddTransient<IEventBus, RabbitMQBus>();
-
-            //Application Services
-            services.AddScoped<IAccountService, AccountService>();
-
-            services.AddTransient<IRequestHandler<CreateTransferCommand, bool>, TransferCommandHandler>();
-
-            //Data
-            services.AddScoped<IAccountRepository, AccountRepository>();
-            //services.AddScoped<BankingDbContext>();
-
             var assembly = AppDomain.CurrentDomain.Load("MicroRabbit.Banging.Domain");
             services.AddMediatR(assembly);
 
+            RegisterServices(services);
             services.AddControllers();
+        }
+
+        private void RegisterServices(IServiceCollection services)
+        {
+            DependencyContainer.RegisterServices(services);
         }
 
 

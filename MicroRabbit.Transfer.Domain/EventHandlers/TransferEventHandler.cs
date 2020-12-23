@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MicroRabbit.Transfer.Domain.EventHandlers
 {
-    public class TranferEventHandler : IEventHandler<TransferCreatedEvent>
+    public class TransferEventHandler : IEventHandler<TransferCreatedEvent>
     {
         public async Task HandleAsync(TransferCreatedEvent eventArg)
         {

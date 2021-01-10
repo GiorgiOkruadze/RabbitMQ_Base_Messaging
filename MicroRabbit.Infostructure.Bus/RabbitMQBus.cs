@@ -57,13 +57,14 @@ namespace MicroRabbit.Infostructure.Bus
 
             if(!_handlers.ContainsKey(eventName))
             {
-                _handlers.Add(eventName, new List<Type>() { handlerType });
+                _handlers.Add(eventName, new List<Type>());
             }
             else if(_handlers[eventName].Any(o => o.GetType() == handlerType))
             {
                 throw new ArgumentException($"Handler type {handlerType.Name} has been already registered");
             }
 
+            _handlers[eventName].Add(handlerType);
 
             StartBasicConsume<T>();
         }
